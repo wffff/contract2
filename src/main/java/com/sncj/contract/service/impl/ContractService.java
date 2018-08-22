@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * Created by Danny on 2018/8/21.
@@ -33,6 +34,7 @@ public class ContractService implements IContractService {
         c.setFax(fax);
         c.setSalemanId(salemanId);
         c.setAmount(amount);
+        c.setTime(new Date());
         return iContractRepository.save(c);
     }
 }

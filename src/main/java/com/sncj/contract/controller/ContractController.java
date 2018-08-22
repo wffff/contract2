@@ -27,4 +27,16 @@ public class ContractController {
         Page<ContractEntity> p = iContractService.page(page, limit);
         return ReturnMessage.success((int) p.getTotalElements(), p.getContent());
     }
+
+    @RequestMapping("save")
+    @ResponseBody
+    public ReturnMessage<ContractEntity> save(String content,String companyName,Integer contactId,String phone,String fax,Integer salemanId,Double amount) {
+        ContractEntity c = iContractService.save(content, companyName, contactId, phone, fax, salemanId, amount);
+        if (c!=null){
+            return ReturnMessage.success(0,c);
+        }else {
+            return ReturnMessage.failed("保存失败");
+        }
+    }
+
 }
