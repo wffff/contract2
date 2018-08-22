@@ -1,0 +1,66 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="layui-body" style="padding: 15px;" th:fragment="content">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">合同标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+             <textarea name="content" id="content" rows="10" cols="80">
+                请在此输入合同正文
+            </textarea>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">手机</label>
+                <div class="layui-input-inline">
+                    <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">公司名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="email" lay-verify="email" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">联系人</label>
+                <div class="layui-input-inline">
+                    <select name="modules" lay-verify="required" lay-search="">
+                        <option value="">直接选择或搜索选择</option>
+                        <option value="1">layer</option>
+                        <option value="2">form</option>
+                        <option value="3">layim</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">销售人员</label>
+                <div class="layui-input-inline">
+                    <select name="modules" lay-verify="required" lay-search="">
+                        <option value="">直接选择或搜索选择</option>
+                        <option value="1">layer</option>
+                        <option value="2">form</option>
+                        <option value="3">layim</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
+<script>
+    layui.use('form', function () {
+
+    });
+    CKEDITOR.replace('content',{
+        filebrowserImageUploadUrl : '/uploadImg',
+        language : 'zh-cn',
+    });
+</script>
+
+</div>

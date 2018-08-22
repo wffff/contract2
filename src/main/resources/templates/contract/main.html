@@ -1,0 +1,95 @@
+<html xmlns:th="http://www.thymeleaf.org" >
+<div class="layui-body" style="padding: 15px;" th:fragment="content">
+    <div class="layui-btn-group demoTable">
+        <button class="layui-btn" data-type="addContract">创建合同</button>
+        <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+        <button class="layui-btn" data-type="isAll">验证是否全选</button>
+    </div>
+
+    <table class="page-table" th:id="contract" th:attr="lay-filter='contract'"></table>
+
+    <!--<script type="text/html" id="barDemo">-->
+        <!--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>-->
+        <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+        <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+
+    <script>
+        layui.use(['table', 'jquery','form'], function () {
+            var table = layui.table;
+            var $ = layui.jquery;
+            var form = layui.form;
+            //方法级渲染
+            table.render({
+                id: 'contract'
+                , elem: '#contract'
+                , url: '/contract/page'
+                , cols: [
+                    [
+                        {checkbox: true, fixed: true}
+                        , {field: 'id', title: 'ID', width: 80}
+                        , {field: 'content', title: '合同正文', width: 200}
+                        , {field: 'companyName', title: '公司名称', width: 150}
+                        , {field: 'phone', title: '手机号', width: 150}
+                        , {field: 'amount', title: '金额', width: 80,align:'right'}
+                    ]
+                ]
+                , page: true
+                , height: 570
+            });
+
+            var active = {
+                addContract: function(){ //获取选中数据
+                   window.location.href="/main?page=contract/add";
+                }
+                ,getCheckLength: function(){ //获取选中数目
+                    var checkStatus = table.checkStatus('contract')
+                        ,data = checkStatus.data;
+                    layer.msg('选中了：'+ data.length + ' 个');
+                }
+                ,isAll: function(){ //验证是否全选
+                    var checkStatus = table.checkStatus('contract');
+                    layer.msg(checkStatus.isAll ? '全选': '未全选')
+                },
+                userAdd: function () {
+                    layer.open({
+                        type: 1
+                        , title: ['用户创建', 'font-size:18px;']
+                        , closeBtn: 1
+                        , area: ['450px', '300px']
+                        , maxmin: true  //最大最小化
+                        , id: 'LAY_layui_userForm' //设定一个id，防止重复弹出
+                        , content: $('#userForm')
+                        , resize: true
+                        , shadeClose: true
+                        // ,zIndex: layer.zIndex //重点1
+                        // ,success: function(layero){
+                        //     layer.setTop(layero); //重点2
+                        // }
+                    });
+                }
+            };
+            form.on("submit(userFormSubmit)",function (data) {
+                $.ajax({
+                    url:'/passport/user/add',
+                    method:'POST',
+                    data:data.field,
+                    success:function (data) {
+                        if (data.code>=0){
+                            layer.closeAll();
+                            table.reload('user');
+                            layer.msg(data.msg,{time:1000});
+                        }else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+                return false;
+            });
+
+            $('.layui-btn').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+    </script>
+</div>
