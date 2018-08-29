@@ -31,7 +31,6 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-web-services')
     compile('org.thymeleaf.extras:thymeleaf-extras-springsecurity4')
-    compile("com.alibaba:fastjson")
     compile('com.qcloud:cos_api:5.2.4'){
         exclude module: 'slf4j-log4j12'
     }
