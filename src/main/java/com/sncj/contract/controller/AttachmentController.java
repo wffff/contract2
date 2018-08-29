@@ -26,4 +26,12 @@ public class AttachmentController {
         return ReturnMessage.success(a.size(), a);
     }
 
+
+    @RequestMapping("update")
+    @ResponseBody
+    public ReturnMessage<AttachmentEntity> update(Integer id,String type,String content,String url,Integer contractId) {
+        AttachmentEntity a = iAttachmentService.update(id,type,content,url,contractId);
+        return ReturnMessage.success(0, a);
+    }
+
 }

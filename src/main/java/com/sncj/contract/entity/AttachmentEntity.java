@@ -11,18 +11,13 @@ import javax.persistence.Transient;
 @Table(name = "t_attachment")
 public class AttachmentEntity extends BaseEntity{
     private Integer contractId;
-    private AttachmentTypeEnum type;
+    private String type;
     private String content;
     private String url;
-    @Transient
-    private String typeName;
 
     public AttachmentEntity() {
     }
 
-    public String getTypeName() {
-        return type.des;
-    }
 
     public Integer getContractId() {
         return contractId;
@@ -32,11 +27,11 @@ public class AttachmentEntity extends BaseEntity{
         this.contractId = contractId;
     }
 
-    public AttachmentTypeEnum getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(AttachmentTypeEnum type) {
+    public void setType(String type) {
         this.type = type;
     }
 

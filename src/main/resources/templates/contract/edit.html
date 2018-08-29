@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div class="layui-body" style="padding: 15px;" th:fragment="content">
     <form th:id="contractEdit" class="layui-form" action="">
-        <input type="hidden"  id="id" th:value="${detailId}">
+        <input type="hidden" id="id" th:value="${detailId}">
         <div class="layui-form-item">
             <label class="layui-form-label">合同标题</label>
             <div class="layui-input-block">
@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-             <textarea name="content"  id="content" rows="10" cols="80">
+             <textarea name="content" id="content" rows="10" cols="80">
             </textarea>
         </div>
 
@@ -24,12 +24,10 @@
             <div class="layui-inline">
                 <label class="layui-form-label">签订时间</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="time" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    <input type="text" name="time" id="date" lay-verify="date" placeholder="yyyy-MM-dd"
+                           autocomplete="off" class="layui-input">
                 </div>
             </div>
-        </div>
-
-        <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">电话</label>
                 <div class="layui-input-inline">
@@ -57,31 +55,6 @@
                     <input type="text" name="saleman" autocomplete="off" class="layui-input">
                 </div>
             </div>
-        </div>
-
-        <!--<div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">联系人</label>
-                <div class="layui-input-inline">
-                    <select name="contactId" lay-verify="required" lay-search="">
-                        <option value="">直接选择或搜索选择</option>
-                        <option value="1">admin</option>
-                        <option value="2">user</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">销售人员</label>
-                <div class="layui-input-inline">
-                    <select name="salemanId" lay-verify="required" lay-search="">
-                        <option value="">直接选择或搜索选择</option>
-                        <option value="1">admin</option>
-                        <option value="2">user</option>
-                    </select>
-                </div>
-            </div>
-        </div>-->
-        <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">金额</label>
                 <div class="layui-input-inline">
@@ -108,22 +81,124 @@
         <div class="layui-form-item">
             <div class="layui-inline">
                 <button class="layui-btn" lay-submit="" lay-filter="editSubmit">修改</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-
             </div>
         </div>
     </form>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>附件情况</legend>
+    </fieldset>
+    <div class="layui-btn-group demoTable">
+        <button class="layui-btn" data-type="add">增加</button>
+        <button class="layui-btn" data-type="del">删除</button>
+        <button class="layui-btn" data-type="save">保存</button>
+    </div>
+    <div th:id="editImg" style="display: none">
+        <div>
+            <div><img class="layui-upload-img" id="imagesView"></div>
+        </div>
+    </div>
+    <table class="page-table" th:id="attachmentEdit" th:attr="lay-filter='attachmentEdit'"></table>
     <script>
-        layui.use(['form','jquery'], function () {
-            var form =layui.form;
-            var $=layui.jquery;
-            var laydate=layui.laydate;
+        layui.use(['form', 'jquery', 'table','upload'], function () {
+            var form = layui.form;
+            var $ = layui.jquery;
+            var laydate = layui.laydate;
+            var table = layui.table;
+            var upload = layui.upload;
+
+            var active = {
+                add: function () {
+                    var rowData = table.cache.attachmentEdit;
+                    var data = {
+                        "type": "",
+                        "content": "",
+                        "url": "",
+                    };
+                    if (rowData) {
+                        rowData.push(data);
+                    } else {
+                        rowData = [data];
+                    }
+                    table.reload('attachmentEdit', {
+                        url: '',
+                        data: rowData
+                    });
+                },
+                del: function () {
+                    console.log("del");
+                },
+                save: function () {
+                    var rowData = table.cache.attachmentEdit;
+                    for (var i = 0; i < rowData.length; i++) {
+                        $.ajax({
+                            url: '/attachment/update',
+                            data: {id:rowData[i].id,
+                                url:rowData[i].url,
+                                content:rowData[i].content,
+                            type:rowData[i].type,
+                            contractId:$("#id").val()},
+                            method: 'POST',
+                            success: function (data) {
+                                var d = data.data;
+                                if (data.code >= 0) {
+
+                                } else {
+                                    layer.msg(data.msg);
+                                }
+                            }
+                        });
+                    }
+                    layer.msg("保存成功");
+                }
+            }
+            table.on('tool(attachmentEdit)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event;
+                if (layEvent === 'imageView') {
+                    $('#imagesView').attr('src', data.url);
+                    layer.open({
+                        type: 1
+                        , title: ['图片', 'font-size:18px;']
+                        , closeBtn: 1
+                        , shade: 0
+                        , area: ['1200px', '700px']
+                        , maxmin: true  //最大最小化
+                        , id: 'LAY_layui_editImg' //设定一个id，防止重复弹出
+                        , content: $('#editImg')
+                        , resize: true
+                    });
+                }
+            });
+            table.render({
+                id: 'attachmentEdit'
+                , elem: '#attachmentEdit'
+                , url: '/attachment/byId'
+                , where: {id: $("#id").val()}
+                , cols: [
+                    [
+                        {checkbox: true, fixed: true}
+                        , {field: 'type', title: '类型', width: 150, edit: 'text'}
+                        , {field: 'content', title: '内容', width: 300, edit: 'text'}
+                        , {
+                        field: 'field',
+                        title: '查看图片',
+                        fixed: 'right',
+                        width: 130,
+                        event: 'imageView',
+                        align: 'center',
+                        templet: function (d) {
+                            return "<div class='layui-btn layui-btn-xs'>查看图片</div>"
+                        }
+                    }
+                    ]
+                ]
+            });
             $.ajax({
                 url: '/contract/detail',
-                data:{id:$('#id').val()},
+                data: {id: $('#id').val()},
                 method: 'POST',
                 success: function (data) {
-                    var d=data.data;
+                    var d = data.data;
                     if (data.code >= 0) {
                         CKEDITOR.instances.content.setData(d.content);
                         $("#contractEdit input[name='companyName']").val(d.companyName);
@@ -133,48 +208,42 @@
                         $("#contractEdit input[name='fax']").val(d.fax);
                         $("#contractEdit input[name='contactMan']").val(d.contactMan);
                         $("#contractEdit input[name='saleman']").val(d.saleman);
-                       // $("#contractEdit select[name='contactId']").find('option').attr("selected", false);
-                       // $("#contractEdit select[name='contactId']").find('option[value="' +d.contactId+ '"]').attr("selected", true);
-                       // $("#contractEdit select[name='salemanId']").find('option').attr("selected", false);
-                        //$("#contractEdit select[name='salemanId']").find('option[value="' +d.salemanId+ '"]').attr("selected", true);
-
-
                         $("#contractEdit input[name='amount']").val(d.amount);
                         $("#contractEdit textarea[name='remarks']").val(d.remarks);
                         $("#contractEdit select[name='payMethod']").find('option').attr("selected", false);
-                        $("#contractEdit select[name='payMethod']").find('option[value="' +d.payMethod+ '"]').attr("selected", true);
+                        $("#contractEdit select[name='payMethod']").find('option[value="' + d.payMethod + '"]').attr("selected", true);
                         form.render();
                     } else {
                         layer.msg(data.msg);
                     }
                 }
             });
-            form.on('submit(editSubmit)', function(data) {
-                //    console.log(CKEDITOR.instances.content.getData());
-                //   return false;
-                //});
-
+            $('.layui-btn').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+            form.on('submit(editSubmit)', function (data) {
                 $.ajax({
                     url: '/contract/update',
-                   // data:{id:$('#id').val()},id放这里无法获取
+                    // data:{id:$('#id').val()},id放这里无法获取
                     method: 'POST',
                     data: {
-                        id:$('#id').val(),
-                        content:CKEDITOR.instances.content.getData(),
-                        companyName:$("#contractEdit input[name='companyName']").val(),
-                        contactId:$("#contractEdit select[name='contactId']").val(),
-                        phone:$("#contractEdit input[name='phone']").val(),
-                        fax:$("#contractEdit input[name='fax']").val(),
-                        salemanId:$("#contractEdit select[name='salemanId']").val(),
-                        amount:$("#contractEdit input[name='amount']").val(),
-                        time:$("#contractEdit input[name='time']").val(),
-                        payMethod:$("#contractEdit select[name='payMethod']").val(),
-                        title:$("#contractEdit input[name='title']").val(),
-                        remarks:$("#contractEdit textarea[name='remarks']").val()
+                        id: $('#id').val(),
+                        content: CKEDITOR.instances.content.getData(),
+                        companyName: $("#contractEdit input[name='companyName']").val(),
+                        contactId: $("#contractEdit select[name='contactId']").val(),
+                        phone: $("#contractEdit input[name='phone']").val(),
+                        fax: $("#contractEdit input[name='fax']").val(),
+                        salemanId: $("#contractEdit select[name='salemanId']").val(),
+                        amount: $("#contractEdit input[name='amount']").val(),
+                        time: $("#contractEdit input[name='time']").val(),
+                        payMethod: $("#contractEdit select[name='payMethod']").val(),
+                        title: $("#contractEdit input[name='title']").val(),
+                        remarks: $("#contractEdit textarea[name='remarks']").val()
                     },
                     success: function (data) {
                         if (data.code >= 0) {
-                            window.location.href="/main?page=contract/main";
+                            window.location.href = "/main?page=contract/main";
                         } else {
                             layer.msg(data.msg);
                         }
@@ -183,10 +252,11 @@
                 return false;
             });
         });
+
         CKEDITOR.replace('content');
         CKEDITOR.config.image_previewText = ' ';
         CKEDITOR.config.filebrowserImageUploadUrl = '/uploadImg';
-        CKEDITOR.config.language  = 'zh-cn';
+        CKEDITOR.config.language = 'zh-cn';
 
     </script>
 

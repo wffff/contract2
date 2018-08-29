@@ -49,7 +49,12 @@ public class ContractService implements IContractService {
 
     @Override
     public ContractEntity update(Integer id, String content, String companyName, String contactMan, String phone, String fax, String saleman, Double amount, Date time, String payMethod, String title, String remarks) {
-        ContractEntity c=iContractRepository.findById(id).get();
+        ContractEntity c;
+        if (id==null){
+            c=new ContractEntity();
+        }else {
+            c = iContractRepository.findById(id).get();
+        }
         c.setContent(content);
         c.setCompanyName(companyName);
         c.setContactMan(contactMan);

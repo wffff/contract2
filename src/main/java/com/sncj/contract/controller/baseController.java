@@ -92,7 +92,6 @@ public class baseController {
                                 HttpServletResponse response,
                                 HttpServletRequest request)
             throws IllegalStateException, IOException {
-        String callback = request.getParameter("CKEditorFuncNum");
 //        if (uploadContentType.equals("image/pjpeg")
 //                || uploadContentType.equals("image/jpeg")) {
 //// IE6上传jpg图片的headimageContentType是image/pjpeg，而IE9以及火狐上传的jpg图片是image/jpeg

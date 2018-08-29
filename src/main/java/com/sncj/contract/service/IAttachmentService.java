@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface IAttachmentService {
     List<AttachmentEntity> findAllByContractId(Integer contractId);
+
+   AttachmentEntity update(Integer id, String type, String content, String url,Integer contractId);
 }
