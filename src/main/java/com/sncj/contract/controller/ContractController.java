@@ -26,8 +26,13 @@ public class ContractController {
 
     @RequestMapping("page")
     @ResponseBody
-    public ReturnMessage<List<ContractEntity>> page(@RequestParam(value = "page", defaultValue = "1") Integer page, @RequestParam(value = "limit", defaultValue = "20") Integer limit) {
-        Page<ContractEntity> p = iContractService.page(page, limit);
+    public ReturnMessage<List<ContractEntity>> page(@RequestParam(value = "page", defaultValue = "1") Integer page, @RequestParam(value = "limit", defaultValue = "20") Integer limit,String name) {
+        Page<ContractEntity> p;
+        if (name.equals("超级管理员")){
+             p = iContractService.page(page, limit);
+        }else {
+            p = iContractService.page(page, limit,name);
+        }
         return ReturnMessage.success((int) p.getTotalElements(), p.getContent());
     }
 

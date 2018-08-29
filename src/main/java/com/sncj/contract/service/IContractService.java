@@ -17,4 +17,6 @@ public interface IContractService {
     ContractEntity findById(Integer id);
 
     void delete(Integer id);
+
+    Page<ContractEntity> page(Integer page, Integer limit, String name);
 }

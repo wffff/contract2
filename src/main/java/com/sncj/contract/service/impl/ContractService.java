@@ -3,6 +3,7 @@ package com.sncj.contract.service.impl;
 import com.sncj.contract.entity.ContractEntity;
 import com.sncj.contract.repository.IContractRepository;
 import com.sncj.contract.service.IContractService;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -81,5 +82,12 @@ public class ContractService implements IContractService {
     public void delete(Integer id)
     {
         iContractRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<ContractEntity> page(Integer page, Integer limit, String name) {
+        ContractEntity c=new ContractEntity();
+        c.setContactMan(name);
+        return iContractRepository.findAll(Example.of(c),PageRequest.of(page-1,limit));
     }
 }

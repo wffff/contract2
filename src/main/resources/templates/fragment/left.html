@@ -7,7 +7,7 @@
             <li class="layui-nav-item layui-nav-itemed">
                 <a class="" href="javascript:;">合同管理</a>
                 <dl class="layui-nav-child">
-                    <dd><a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/main?page=contract/main}">合同</a></dd>
+                    <dd><a th:href="@{/main?page=contract/main}">合同</a></dd>
                     <dd><a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/main?page=user/register}">注册</a></dd>
                 </dl>
             </li>

@@ -1,11 +1,10 @@
-<html xmlns:th="http://www.thymeleaf.org" >
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div class="layui-body" style="padding: 15px;" th:fragment="content">
     <div class="layui-btn-group demoTable">
-        <button class="layui-btn" data-type="addContract">创建合同</button>
+        <button class="layui-btn" data-type="addContract" sec:authorize="hasAuthority('ROLE_ADMIN')" >创建合同</button>
         <button class="layui-btn" data-type="detailContract">查看合同详情</button>
-        <button class="layui-btn" data-type="deleteContract">删除合同</button>
-        <button class="layui-btn" data-type="editContract">编辑合同</button>
-        <button class="layui-btn" data-type="isAll">验证是否全选</button>
+        <button class="layui-btn" data-type="deleteContract" sec:authorize="hasAuthority('ROLE_ADMIN')" >删除合同</button>
+        <button class="layui-btn" data-type="editContract" sec:authorize="hasAuthority('ROLE_ADMIN')" >编辑合同</button>
 
 
 
@@ -28,6 +27,7 @@
                 id: 'contract'
                 , elem: '#contract'
                 , url: '/contract/page'
+                , where:{name:$("#username").html()}
                 , cols: [
                     [
                         {checkbox: true, fixed: true}
