@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>注册</title>
+</head>
+<body>
+<div class="layui-body" style="padding: 15px;"  th:fragment="content">
+    <div class="layui-btn-group demoTable">
+        <button class="layui-btn" data-type="addUser">创建用户</button>
+    </div>
+    <table class="page-table" th:id="user" th:attr="lay-filter='user'"></table>
+
+<script>
+    layui.use(['table','jquery','form'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var table = layui.table;
+        //方法级渲染
+        table.render({
+            id: 'user'
+            , elem: '#user'
+            , url: '/user/page'
+            , cols: [
+                [
+                    {checkbox: true, fixed: true}
+                    , {field: 'id', title: 'ID', width: 80}
+                    , {field: 'username', title: '用户名', width: 200}
+                    , {field: 'fullname', title: '全称', width: 150}
+                ]
+            ]
+            , page: true
+            , height: 570
+        });
+        var active = {
+            addUser: function(){ //获取选中数据
+                window.location.href="/main?page=user/add";
+            }
+        };
+        $('.layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</div>
+</body>
+</html>

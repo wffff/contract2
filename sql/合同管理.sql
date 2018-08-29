@@ -24,6 +24,7 @@ CREATE TABLE `t_contract` (
     del                           BOOLEAN        NOT NULL DEFAULT FALSE,
 	last                         datetime         DEFAULT NULL,
 	time                         datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP
+
 )ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 CREATE TABLE `t_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

@@ -2,8 +2,13 @@
 <div class="layui-body" style="padding: 15px;" th:fragment="content">
     <div class="layui-btn-group demoTable">
         <button class="layui-btn" data-type="addContract">创建合同</button>
-        <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+        <button class="layui-btn" data-type="detailContract">查看合同详情</button>
+        <button class="layui-btn" data-type="deleteContract">删除合同</button>
+        <button class="layui-btn" data-type="editContract">编辑合同</button>
         <button class="layui-btn" data-type="isAll">验证是否全选</button>
+
+
+
     </div>
 
     <table class="page-table" th:id="contract" th:attr="lay-filter='contract'"></table>
@@ -41,11 +46,59 @@
                 addContract: function(){ //获取选中数据
                    window.location.href="/main?page=contract/add";
                 }
-                ,getCheckLength: function(){ //获取选中数目
+                ,detailContract: function(){ //获取选中数目
                     var checkStatus = table.checkStatus('contract')
                         ,data = checkStatus.data;
-                    layer.msg('选中了：'+ data.length + ' 个');
+                    if (data.length!=1){
+                        layer.msg("数量不为1",{time:2000})
+                    } else {
+                        window.location.href="/main?page=contract/detail&contractDetailId="+data[0].id;
+                    }
                 }
+
+                ,deleteContract: function() { //获取选中数目
+                    var checkStatus = table.checkStatus('contract')
+                        , data = checkStatus.data;
+                       var delList = [];
+                    data.forEach(function (n, i) {
+                        delList.push(n.id);
+                    });
+                    if (delList != '') {
+                        layer.confirm('确定删除所选项吗？', function (index) {
+                            $.ajax({
+                                url: '/contract/delete',
+                                type: 'post',
+                                dataType: 'json',
+                                data: "id=" + delList,
+                                success: function (data) {
+                                    if (data.code >= 0) {
+                                        layer.msg('删除成功');
+                                        table.reload('contract', {});//刷新表格数据
+                                    } else {
+                                        layer.msg('删除失败');
+                                    }
+                                },
+                                'error': function () {
+                                    layer.msg('系统错误');
+                                }
+                            })
+                        })
+                    } else {
+                        layer.msg("数量不为1")
+                    }
+                }
+
+                ,editContract: function(){ //获取选中数目
+                    var checkStatus = table.checkStatus('contract')
+                        ,data = checkStatus.data;
+                    if (data.length!=1){
+                        layer.msg("数量不为1",{time:2000})
+                    } else {
+                        window.location.href="/main?page=contract/edit&contractDetailId="+data[0].id;
+                    }
+                }
+
+
                 ,isAll: function(){ //验证是否全选
                     var checkStatus = table.checkStatus('contract');
                     layer.msg(checkStatus.isAll ? '全选': '未全选')
@@ -67,6 +120,23 @@
                         // }
                     });
                 }
+
+                ,reload: function(){
+                    var company = $('#company');
+
+                    //执行重载
+                    table.reload('contract', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            key: {
+                                id: company.val()
+                            }
+                        }
+                    });
+                }
+
             };
             form.on("submit(userFormSubmit)",function (data) {
                 $.ajax({

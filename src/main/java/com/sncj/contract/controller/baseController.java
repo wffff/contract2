@@ -1,6 +1,5 @@
 package com.sncj.contract.controller;
 
-import com.qcloud.Utilities.Json.JSONObject;
 import com.sncj.contract.baseconfig.SecurityUserUtils;
 import com.sncj.contract.service.IUploadService;
 import org.springframework.security.access.annotation.Secured;
@@ -40,12 +39,18 @@ public class baseController {
 
 
     @RequestMapping("/main")
-    public String home(@RequestParam(value = "page", required = false) String page, Model model, HttpServletRequest request, Principal principal) {
+    public String home(@RequestParam(value = "page", required = false) String page, Model model, HttpServletRequest request, Principal principal,Integer contractDetailId, Integer contractEditId) {
         if (page != null) {
             model.addAttribute("main", page);
         } else {
             model.addAttribute("main", "main");
         }
+        if (null!=contractDetailId){
+            model.addAttribute("detailId",contractDetailId);
+        }
+        //if (null!=contractEditId){
+         //   model.addAttribute("editId",contractEditId);
+        //}
         model.addAttribute("username", SecurityUserUtils.getSecurityUser().getFullname());
         return "index";
     }

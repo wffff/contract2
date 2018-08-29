@@ -51,26 +51,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
     }
 
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return !expired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return !limited;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -89,6 +69,26 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return !expired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return !limited;
     }
 
     public Set<GrantedAuthority> getAuthorities() {
