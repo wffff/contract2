@@ -27,10 +27,10 @@ public class AttachmentController {
     }
 
 
-    @RequestMapping("update")
+    @RequestMapping("save")
     @ResponseBody
-    public ReturnMessage<AttachmentEntity> update(Integer id,String type,String content,String url,Integer contractId) {
-        AttachmentEntity a = iAttachmentService.update(id,type,content,url,contractId);
+    public ReturnMessage<AttachmentEntity> save(String type,String content,String url,Integer contractId) {
+        AttachmentEntity a = iAttachmentService.save(type,content,url,contractId);
         return ReturnMessage.success(0, a);
     }
 

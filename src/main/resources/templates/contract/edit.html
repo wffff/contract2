@@ -90,65 +90,101 @@
     <div class="layui-btn-group demoTable">
         <button class="layui-btn" data-type="add">增加</button>
         <button class="layui-btn" data-type="del">删除</button>
-        <button class="layui-btn" data-type="save">保存</button>
     </div>
     <div th:id="editImg" style="display: none">
         <div>
             <div><img class="layui-upload-img" id="imagesView"></div>
         </div>
     </div>
+    <div id="attachment" style='display:none; '>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">类型</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="type" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">内容</label>
+                <div class="layui-input-inline">
+                    <textarea placeholder="请输入内容" class="layui-textarea" name="content"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="layui-upload">
+            <button type="button" class="layui-btn" id="test1">上传图片</button>
+        </div>
+        <input type="hidden" th:id="imgUrl">
+
+        <div class="layui-tab-content">
+            <button style="padding:0 20px;" class="layui-btn layui-btn-normal layui-btn-small" data-type="save" >保存</button>
+        </div>
+    </div>
+
     <table class="page-table" th:id="attachmentEdit" th:attr="lay-filter='attachmentEdit'"></table>
     <script>
-        layui.use(['form', 'jquery', 'table','upload'], function () {
+        layui.use(['form', 'jquery', 'table', 'upload'], function () {
             var form = layui.form;
             var $ = layui.jquery;
             var laydate = layui.laydate;
             var table = layui.table;
             var upload = layui.upload;
+            var uploadInst = upload.render({
+                elem: '#test1'
+                , url: '/upload'
+                , before: function (obj) {
+                    //预读本地文件示例，不支持ie8
+                }
+                , done: function (res) {
+                    //如果上传失败
+                    if (res.code > 0) {
+                        return layer.msg('上传失败');
+                    } else if (res.code == 0) {
+                        layer.msg('上传成功');
+                    $("#imgUrl").val(res.url);
+                    }
+
+                    //上传成功
+                }
+                , error: function () {
+                    //演示失败状态，并实现重传
+                }
+            });
 
             var active = {
                 add: function () {
-                    var rowData = table.cache.attachmentEdit;
-                    var data = {
-                        "type": "",
-                        "content": "",
-                        "url": "",
-                    };
-                    if (rowData) {
-                        rowData.push(data);
-                    } else {
-                        rowData = [data];
-                    }
-                    table.reload('attachmentEdit', {
-                        url: '',
-                        data: rowData
+                    layer.open({
+                        type: 1,
+                        title: '增加附件',
+                        skin: 'layui-layer-attachment', //加上边框
+                        content: $('#attachment'),
+                        shade: 0
+                        , area: ['500px', '400px']
                     });
                 },
                 del: function () {
                     console.log("del");
                 },
                 save: function () {
-                    var rowData = table.cache.attachmentEdit;
-                    for (var i = 0; i < rowData.length; i++) {
-                        $.ajax({
-                            url: '/attachment/update',
-                            data: {id:rowData[i].id,
-                                url:rowData[i].url,
-                                content:rowData[i].content,
-                            type:rowData[i].type,
-                            contractId:$("#id").val()},
-                            method: 'POST',
-                            success: function (data) {
-                                var d = data.data;
-                                if (data.code >= 0) {
-
-                                } else {
-                                    layer.msg(data.msg);
-                                }
+                    $.ajax({
+                        url: '/attachment/save',
+                        data: {contractId: $('#id').val(),
+                        content:$("#attachment textarea[name='content']").val(),
+                        url:$("#imgUrl").val(),
+                        type:$("#attachment input[name='type']").val()},
+                        method: 'POST',
+                        success: function (data) {
+                            if (data.code >= 0) {
+                                layer.closeAll();
+                                layer.msg("保存附件成功");
+                                table.reload('attachmentEdit',{})
+                            } else {
+                                layer.msg(data.msg);
                             }
-                        });
-                    }
-                    layer.msg("保存成功");
+                        }
+                    });
                 }
             }
             table.on('tool(attachmentEdit)', function (obj) {

@@ -89,55 +89,29 @@ public class baseController {
     @RequestMapping("/uploadImg")
     @ResponseBody
     public Map uploadImg(@RequestParam("upload") MultipartFile file,
-                                HttpServletResponse response,
-                                HttpServletRequest request)
+                         HttpServletResponse response,
+                         HttpServletRequest request)
             throws IllegalStateException, IOException {
-//        if (uploadContentType.equals("image/pjpeg")
-//                || uploadContentType.equals("image/jpeg")) {
-//// IE6上传jpg图片的headimageContentType是image/pjpeg，而IE9以及火狐上传的jpg图片是image/jpeg
-//            expandedName = ".jpg";
-//        } else if (uploadContentType.equals("image/png")
-//                || uploadContentType.equals("image/x-png")) {
-//// IE6上传的png图片的headimageContentType是"image/x-png"
-//            expandedName = ".png";
-//        } else if (uploadContentType.equals("image/gif")) {
-//            expandedName = ".gif";
-//        } else if (uploadContentType.equals("image/bmp")) {
-//            expandedName = ".bmp";
-//        } else {
-//            out.println("<script type=\"text/javascript\">");
-//            out.println("window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum
-//                    + ",''," + "'文件格式不正确（必须为.jpg/.gif/.bmp/.png文件）');");
-//            out.println("</script>");
-//            return ;
-//        }
-//        if (file.getSize()> 600 * 1024) {
-//            out.println("<script type=\"text/javascript\">");
-//            out.println("window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum
-//                    + ",''," + "'文件大小不得大于600k');");
-//            out.println("</script>");
-//            return ;
-//        }
-
-//        DateFormat df = new SimpleDateFormat(DEFAULT_SUB_FOLDER_FORMAT_AUTO);
-// 返回"图像"选项卡并显示图片  request.getContextPath()为web项目名
         URL u = iUploadService.upload(file);
-//        PrintWriter out = response.getWriter();
-//        out.println("<script type=\"text/javascript\">");
-//        out.println("window.parent.CKEDITOR.tools.callFunction(" + callback + ",'" + u.getHost()+u.getPath() + "',''" + ")");
-//        out.println("</script>");
-//        out.flush();
-//        out.close();
-
         Map m = new HashMap();
         m.put("uploaded", 1);
-
         m.put("fileName", u.getFile());
-
         m.put("url", "https://"+u.getHost() + u.getPath());
-
         return m;
-//        return ;
+    }
+    @RequestMapping("/upload")
+    @ResponseBody
+    public Map upload(MultipartFile file,
+                         HttpServletResponse response,
+                         HttpServletRequest request)
+            throws IllegalStateException, IOException {
+        URL u = iUploadService.upload(file);
+        Map m = new HashMap();
+        m.put("code", 0);
+        m.put("uploaded", 1);
+        m.put("fileName", u.getFile());
+        m.put("url", "https://"+u.getHost() + u.getPath());
+        return m;
     }
 
 }
