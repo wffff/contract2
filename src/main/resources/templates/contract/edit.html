@@ -84,6 +84,8 @@
             </div>
         </div>
     </form>
+
+
     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
         <legend>附件情况</legend>
     </fieldset>
@@ -98,7 +100,7 @@
     </div>
     <div id="attachment" style='display:none; '>
         <div class="layui-form-item">
-            <div class="layui-inline">
+            <div class="layui-inline" style="margin-top: 5px;">
                 <label class="layui-form-label">类型</label>
                 <div class="layui-input-inline">
                     <input type="text" name="type" autocomplete="off" class="layui-input">
@@ -113,17 +115,22 @@
                 </div>
             </div>
         </div>
-        <div class="layui-upload">
+        <!--<div class="layui-upload">
             <button type="button" class="layui-btn" id="test1">上传图片</button>
+        </div>-->
+        <div class="layui-upload-drag" id="test1" style="margin-left: 70px">
+            <i class="layui-icon"></i>
+            <p>点击上传，或将文件拖拽到此处</p>
         </div>
         <input type="hidden" th:id="imgUrl">
 
-        <div class="layui-tab-content">
-            <button style="padding:0 20px;" class="layui-btn layui-btn-normal layui-btn-small" data-type="save" >保存</button>
+        <div class="layui-tab-content" style="margin-left: 160px">
+            <button style="padding:0 20px; " class="layui-btn layui-btn-normal layui-btn-small" data-type="save" >保存</button>
         </div>
     </div>
 
     <table class="page-table" th:id="attachmentEdit" th:attr="lay-filter='attachmentEdit'"></table>
+
     <script>
         layui.use(['form', 'jquery', 'table', 'upload'], function () {
             var form = layui.form;
@@ -161,11 +168,40 @@
                         skin: 'layui-layer-attachment', //加上边框
                         content: $('#attachment'),
                         shade: 0
-                        , area: ['500px', '400px']
+                        , area: ['500px', '450px']
                     });
                 },
                 del: function () {
                     console.log("del");
+                    var checkStatus = table.checkStatus('attachmentEdit')
+                        , data = checkStatus.data;
+                    var delList = [];
+                    data.forEach(function (n, i) {
+                        delList.push(n.id);
+                    });
+                    if (delList != '') {
+                        layer.confirm('确定删除所选项吗？', function (index) {
+                            $.ajax({
+                                url: '/attachment/delete',
+                                type: 'post',
+                                dataType: 'json',
+                                data: "id=" + delList,
+                                success: function (data) {
+                                    if (data.code >= 0) {
+                                        layer.msg('删除成功');
+                                        table.reload('attachmentEdit', {});//刷新表格数据
+                                    } else {
+                                        layer.msg('删除失败');
+                                    }
+                                },
+                                'error': function () {
+                                    layer.msg('系统错误');
+                                }
+                            })
+                        })
+                    } else {
+                        layer.msg("数量不为1")
+                    }
                 },
                 save: function () {
                     $.ajax({

@@ -11,4 +11,6 @@ public interface IAttachmentService {
     List<AttachmentEntity> findAllByContractId(Integer contractId);
 
    AttachmentEntity save(String type, String content, String url,Integer contractId);
+
+   void delete(Integer id);
 }

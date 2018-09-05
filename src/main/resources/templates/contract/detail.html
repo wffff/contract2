@@ -139,9 +139,9 @@
                     ]
                 ]
             });
-            table.on('tool(attachment)', function (obj) {
+            table.on('tool(attachment)', function (obj) {//attachment是table容器属性lay-filter=' '的值
                 var data = obj.data;
-                var layEvent = obj.event;
+                var layEvent = obj.event;//获得表头event参数对应的值
                 if (layEvent === 'imageView') {
                     $('#imagesView').attr('src', data.url);
                     layer.open({
@@ -183,7 +183,7 @@
                         $("#contractDetail textarea[name='remarks']").val(d.remarks);
                         $("#contractDetail select[name='payMethod']").find('option').attr("selected", false);
                         $("#contractDetail select[name='payMethod']").find('option[value="' + d.payMethod + '"]').attr("selected", true);
-                        form.render();
+                        //form.render();
                     } else {
                         layer.msg(data.msg);
                     }

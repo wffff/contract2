@@ -26,13 +26,8 @@ public class ContractController {
 
     @RequestMapping("page")
     @ResponseBody
-    public ReturnMessage<List<ContractEntity>> page(@RequestParam(value = "page", defaultValue = "1") Integer page, @RequestParam(value = "limit", defaultValue = "20") Integer limit,String name) {
-        Page<ContractEntity> p;
-        if (name.equals("超级管理员")){
-             p = iContractService.page(page, limit);
-        }else {
-            p = iContractService.page(page, limit,name);
-        }
+    public ReturnMessage<List<ContractEntity>> page(@RequestParam(value = "page", defaultValue = "1") Integer page, @RequestParam(value = "limit", defaultValue = "20") Integer limit, String companyName ,String title) {
+        Page<ContractEntity> p = iContractService.page(page, limit,companyName,title);
         return ReturnMessage.success((int) p.getTotalElements(), p.getContent());
     }
 
@@ -49,8 +44,8 @@ public class ContractController {
 
     @RequestMapping("update")
     @ResponseBody
-    public ReturnMessage<ContractEntity> update(Integer id,String content, String companyName, String contactMan, String phone, String fax, String saleman, Double amount, @DateTimeFormat(pattern = "yyyy-MM-dd") Date time, String payMethod, String title, String remarks) {
-        ContractEntity c = iContractService.update(id,content, companyName, contactMan, phone, fax, saleman, amount, time, payMethod, title, remarks);
+    public ReturnMessage<ContractEntity> update(Integer id, String content, String companyName, String contactMan, String phone, String fax, String saleman, Double amount, @DateTimeFormat(pattern = "yyyy-MM-dd") Date time, String payMethod, String title, String remarks) {
+        ContractEntity c = iContractService.update(id, content, companyName, contactMan, phone, fax, saleman, amount, time, payMethod, title, remarks);
         if (c != null) {
             return ReturnMessage.success(0, c);
         } else {
@@ -76,12 +71,14 @@ public class ContractController {
         return ReturnMessage.success();
     }
 
+    /*@RequestMapping("select")
+    @ResponseBody
+    public ReturnMessage<List<ContractEntity>> select(String companyName) {
 
-   // @RequestMapping("edit")
-   // @ResponseBody
-    //public ReturnMessage<ContractEntity> edit(Integer id) {
-     //   ContractEntity c = iContractService.findById(id);
-     //   return ReturnMessage.success(1, c);
-    //}
+
+        List<ContractEntity> c = iContractService.findAllByNameLike(companyName);
+        return ReturnMessage.success(1, c);
+    }*/
+
 
 }

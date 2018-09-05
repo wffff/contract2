@@ -38,3 +38,50 @@ CREATE TABLE `t_user` (
 	last                        datetime          DEFAULT NULL,
 	time                          datetime   NOT NULL DEFAULT CURRENT_TIMESTAMP
 )ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+
+
+DROP TABLE IF EXISTS t_role CASCADE;
+create table `t_role`
+(
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  name     varchar(50),
+  description    varchar(50),
+  del                           BOOLEAN        NOT NULL DEFAULT FALSE,
+  last                          datetime           DEFAULT NULL,
+  time                          datetime   NOT NULL DEFAULT CURRENT_TIMESTAMP
+)ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+--------用户角色表
+DROP TABLE IF EXISTS t_user_role CASCADE;
+create table `t_user_role`
+(
+  user_id        INTEGER NOT NULL ,
+  role_id        INTEGER NOT NULL
+)ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+
+--------资源表
+
+DROP TABLE IF EXISTS t_permission CASCADE;
+create table `t_permission`
+(
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  name     varchar(50),
+  description    varchar(50),
+  del                           BOOLEAN        NOT NULL DEFAULT FALSE,
+  last                          datetime           DEFAULT NULL,
+  time                          datetime   NOT NULL DEFAULT CURRENT_TIMESTAMP
+)ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+--------用户资源表
+DROP TABLE IF EXISTS t_role_permission CASCADE;
+create table `t_role_permission`
+(
+  role_id        INTEGER NOT NULL ,
+  permission_id        INTEGER NOT NULL
+)ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;

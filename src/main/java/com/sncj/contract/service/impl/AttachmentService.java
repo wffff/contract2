@@ -19,7 +19,7 @@ public class AttachmentService implements IAttachmentService {
 
     @Override
     public List<AttachmentEntity> findAllByContractId(Integer contractId) {
-        return iAttachmentRepository.findAllByContractId(contractId);
+        return iAttachmentRepository.findAllByContractIdAndDelFalse(contractId);
     }
 
     @Override
@@ -31,5 +31,12 @@ public class AttachmentService implements IAttachmentService {
         attachmentEntity.setTime(new Date());
         attachmentEntity.setContractId(contractId);
         return iAttachmentRepository.save(attachmentEntity);
+    }
+
+    public void delete(Integer id) {
+        AttachmentEntity a;
+        a = iAttachmentRepository.findById(id).get();
+        a.setDel(true);
+        iAttachmentRepository.save(a);
     }
 }

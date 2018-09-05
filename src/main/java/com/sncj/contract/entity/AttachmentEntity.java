@@ -18,7 +18,6 @@ public class AttachmentEntity extends BaseEntity{
     public AttachmentEntity() {
     }
 
-
     public Integer getContractId() {
         return contractId;
     }
