@@ -10,4 +10,9 @@ public interface IUserService {
     UserEntity save(String username, String password,String fullname);
 
     Page<UserEntity> page(Integer page, Integer limit);
+    UserEntity findOne(Integer id);
+
+    UserEntity enabled(Integer userId, Integer roleId, boolean grant);
+
+    UserEntity findByUsername(String username);
 }

@@ -7,19 +7,154 @@
 <body>
 <div class="layui-body" style="padding: 15px;"  th:fragment="content">
     <div class="layui-btn-group demoTable">
-        <button class="layui-btn" data-type="addUser">创建用户</button>
+        <button class="layui-btn" data-type="add">增加用户</button>
+        <button class="layui-btn" data-type="grant">分配角色</button>
     </div>
-    <table class="page-table" th:id="user" th:attr="lay-filter='user'"></table>
 
+    <div id="user" style='display:none; '>
+        <div class="layui-form-item">
+            <div class="layui-inline" style="margin-top: 5px;">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="username" id="username" lay-verify="required"  autocomplete="off" class="layui-input" placeholder="请输入用户名" onblur="checkUsername()">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" name="password"  autocomplete="off" placeholder="请输入密码" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">全称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="fullname" autocomplete="off" placeholder="请输入全称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-tab-content" style="margin-left: 160px">
+            <button style="padding:0 20px; " class="layui-btn layui-btn-normal layui-btn-small" data-type="save" >保存</button>
+        </div>
+    </div>
+    <table class="page-table" th:id="userAdd" th:attr="lay-filter='userAdd'"></table>
+
+
+    <div id="roleForm" style='display:none; '>
+        <input type="hidden" id="userId">   <!-- 怎么获得???? 通过$("#permissionGrantId").val(data[0].id)为其赋值，值为选中的角色的id-->
+        <table class="page-table" th:id="role" th:attr="lay-filter='role'"></table>
+    </div>
+
+    <script type="text/html" id="switchTpl">
+        <input type="checkbox" name="enabled" value="{{d.id}}" lay-skin="switch" lay-text="是|否"
+               lay-filter="grantBtn" {{ d.enabled ? 'checked' : ''}} /><!-- d.enabled?? d.id?是所选权限的id??-->
+    </script>
 <script>
     layui.use(['table','jquery','form'], function () {
         var $ = layui.jquery;
         var form = layui.form;
         var table = layui.table;
         //方法级渲染
+        var active = {
+            add: function(){
+                layer.open({
+                    type: 1,
+                    title: '增加用户',
+                    skin: 'layui-layer-attachment', //加上边框
+                    content: $('#user'),
+                    shade: 0
+                    , area: ['500px', '350px']
+                });
+            },
+            save: function () {
+                $.ajax({
+                    url: '/user/save',
+                    data: {
+                        username:$("#user input[name='username']").val(),
+                        password:$("#user input[name='password']").val(),
+                        fullname:$("#user input[name='fullname']").val()},
+                    method: 'POST',
+                    success: function (data) {
+                        if (data.code >= 0) {
+                            layer.closeAll();
+                            layer.msg("保存成功");
+                            table.reload('userAdd',{})
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    },
+                    error:function () {
+                        layer.msg("无此权限");
+                    }
+                });
+            },
+
+            //点击分配角色按钮触发
+            grant:function () {
+                //获取当前所要分配角色权限的user的id
+                var checkStatus = table.checkStatus('userAdd')
+                    ,data = checkStatus.data;
+                if (data.length==1){
+                    //不能一次选中多个并同时为多个user分配角色权限，要判断当前所选是不是一条数据,若是，获取当前所选user的id
+                    $("#userId").val(data[0].id);
+                    //打开弹框
+                    layer.open({
+                        type: 1,
+                        title: ['分配角色','font-size:18px;'],
+                        closeBtn:1,
+                        content: $('#roleForm'),
+                        shade: 0
+                        , area: ['1200px', '700px']
+                        , maxmin: true  //最大最小化
+                        , id: 'LAY_layui_roleForm' //设定一个id，防止重复弹出
+                        , resize: true
+                    });
+                    //渲染角色table
+                    table.render({
+                        id: 'role'
+                        , elem: '#role'
+                        , url: '/role/findAll'  //
+                        , where: {id: data[0].id}
+                        , cols: [
+                            [
+                                //{checkbox: true, fixed: true}
+                                , {field: 'name', title: '角色名', width: 200}
+                                , {field: 'description', title: '描述', width: 150}
+                                , {field: 'enabled', title: '授权', width: 85, templet: '#switchTpl'}
+                            ]
+                        ]
+                        , height: 570
+                    });
+
+                }
+
+            }
+
+        };
+
+        form.on('switch(grantBtn)', function (obj) {
+            $.ajax({
+                url: '/role/grant',
+                data: {
+                    userId: $("#userId").val(),
+                    grant: obj.elem.checked,
+                    roleId: this.value
+                },
+                success: function (res) {
+                    if (res.code >= 0) {
+                        layer.tips('已' + (obj.elem.checked ? '' : '取消') + '授权',
+                            obj.othis, {zIndex: layer.zIndex});
+                    } else {
+                        layer.msg(res.msg, {zIndex: layer.zIndex})
+                    }
+                }
+            });
+        });
+
         table.render({
-            id: 'user'
-            , elem: '#user'
+            id: 'userAdd'
+            , elem: '#userAdd'
             , url: '/user/page'
             , cols: [
                 [
@@ -32,11 +167,9 @@
             , page: true
             , height: 570
         });
-        var active = {
-            addUser: function(){ //获取选中数据
-                window.location.href="/main?page=user/add";
-            }
-        };
+
+
+
         $('.layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';

@@ -85,3 +85,4 @@ create table `t_role_permission`
   role_id        INTEGER NOT NULL ,
   permission_id        INTEGER NOT NULL
 )ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+

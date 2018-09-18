@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>权限</title>
+</head>
+<body>
+<div class="layui-body" style="padding: 15px;"  th:fragment="content">
+    <div class="layui-btn-group demoTable">
+        <button class="layui-btn" data-type="add">添加权限</button>
+    </div>
+
+    <div id="permission" style='display:none; '>
+        <div class="layui-form-item">
+            <div class="layui-inline" style="margin-top: 5px;">
+                <label class="layui-form-label">权限名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" autocomplete="off" class="layui-input" placeholder="请输入权限名">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="description" autocomplete="off" class="layui-input" placeholder="请输入权限描述">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-tab-content" style="margin-left: 160px">
+            <button style="padding:0 20px; " class="layui-btn layui-btn-normal layui-btn-small" data-type="save" >保存</button>
+        </div>
+    </div>
+    <table class="page-table" th:id="permissionAdd" th:attr="lay-filter='permissionAdd'"></table>
+
+    <script>
+        layui.use(['table','jquery','form'], function () {
+            var $ = layui.jquery;
+            var form = layui.form;
+            var table = layui.table;
+            //方法级渲染
+            table.render({
+                id: 'permissionAdd'
+                , elem: '#permissionAdd'
+                , url: '/permission/page'
+                , cols: [
+                    [
+                        {checkbox: true, fixed: true}
+                        , {field: 'id', title: 'ID', width: 80}
+                        , {field: 'name', title: '权限', width: 200}
+                        , {field: 'description', title: '描述', width: 150}
+                    ]
+                ]
+                , page: true
+                , height: 570
+            });
+            var active = {
+                add: function(){ //获取选中数据
+                    layer.open({
+                        type: 1,
+                        title: '增加权限',
+                        skin: 'layui-layer-attachment', //加上边框
+                        content: $('#permission'),
+                        shade: 0
+                        , area: ['500px', '350px']
+                    });
+                },
+                save: function () {
+                    $.ajax({
+                        url: '/permission/save',
+                        data: {
+                            name:$("#permission input[name='name']").val(),
+                            description:$("#permission input[name='description']").val()},
+                        method: 'POST',
+                        success: function (data) {
+                            if (data.code >= 0) {
+                                layer.closeAll();
+                                layer.msg("保存成功");
+                                table.reload('permissionAdd',{})
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                }
+
+            };
+            $('.layui-btn').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

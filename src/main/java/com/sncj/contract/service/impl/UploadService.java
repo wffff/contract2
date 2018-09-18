@@ -91,7 +91,7 @@ public class UploadService implements IUploadService {
             m.put("code", 0);
             m.put("uploaded", 1);
             m.put("fileName", file.getOriginalFilename());
-            m.put("url", "http://localhost:8000/file/download/"+url);
+            m.put("url", "http://localhost:8080/file/download/"+url);
             return m;
         } catch (IOException e) {
             e.printStackTrace();

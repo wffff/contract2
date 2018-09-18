@@ -1,6 +1,8 @@
 package com.sncj.contract.controller;
 
 import com.sncj.contract.baseconfig.SecurityUserUtils;
+import com.sncj.contract.entity.RoleEntity;
+import com.sncj.contract.entity.UserEntity;
 import com.sncj.contract.service.IUploadService;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import java.net.URL;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Danny on 2018/8/21.

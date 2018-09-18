@@ -1,7 +1,11 @@
 package com.sncj.contract.service.impl;
 
+import com.sncj.contract.entity.PermissionEntity;
+import com.sncj.contract.entity.RoleEntity;
 import com.sncj.contract.entity.UserEntity;
+import com.sncj.contract.repository.IRoleRepository;
 import com.sncj.contract.repository.IUserRepository;
+import com.sncj.contract.service.IRoleService;
 import com.sncj.contract.service.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,14 +28,24 @@ import java.util.Set;
 public class UserService implements IUserService, UserDetailsService {
     @Resource
     private IUserRepository iUserRepository;
+    @Resource
+    private IRoleService iRoleService;
 
     @Override
     public UserEntity loadUserByUsername(String s) throws UsernameNotFoundException {
         UserEntity user = iUserRepository.findByUsername(s);
         if (user != null) {
-            Set<GrantedAuthority> grantedAuthorities = new HashSet();
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getRole());
-            grantedAuthorities.add(grantedAuthority);
+            Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+            for (RoleEntity role : user.getRole()) {
+                if (role != null && role.getName() != null) {
+                    for (PermissionEntity permission:role.getPermission()){
+                        if (permission != null && permission.getName() != null) {
+                            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(permission.getName());
+                            grantedAuthorities.add(grantedAuthority);
+                        }
+                    }
+                }
+            }
             return new UserEntity(user.getId(), user.getUsername(), user.getPassword(), user.getFullname(),grantedAuthorities);
         } else {
             throw new UsernameNotFoundException("admin: " + s + " do not exist!");
@@ -39,12 +53,18 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     public UserEntity save(String username, String password,String fullname) {
-        UserEntity u=new UserEntity();
-        u.setUsername(username);
-        u.setPassword(new BCryptPasswordEncoder().encode(password));
-        u.setFullname(fullname);
-        u.setRole("ROLE_USER");
-        u.setTime(new Date());
+
+        UserEntity u = iUserRepository.findByUsername(username);
+        if(u==null) {
+            u=new UserEntity();
+            u.setUsername(username);
+            u.setPassword(new BCryptPasswordEncoder().encode(password));
+            u.setFullname(fullname);
+            u.setTime(new Date());
+            u.setExist(false);
+        }else{
+            u.setExist(true);
+        }
         return iUserRepository.save(u);
     }
 
@@ -52,4 +72,29 @@ public class UserService implements IUserService, UserDetailsService {
     public Page<UserEntity> page(Integer page, Integer limit) {
         return iUserRepository.findAll(PageRequest.of(page-1,limit));
     }
+
+    @Override
+    public UserEntity findOne(Integer id) {
+        return iUserRepository.findById(id).get();
+    }
+
+    @Override
+    public UserEntity enabled(Integer userId, Integer roleId, boolean grant) {
+        UserEntity u = iUserRepository.findById(userId).get();
+        RoleEntity r = iRoleService.findOne(roleId);
+        if (grant){
+            u.getRole().add(r);
+        }else{
+            u.getRole().remove(r);
+        }
+
+        return iUserRepository.save(u);
+    }
+
+    @Override
+    public UserEntity findByUsername(String username) {
+        return iUserRepository.findByUsername(username);
+    }
+
+
 }

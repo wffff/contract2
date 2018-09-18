@@ -3,12 +3,20 @@
        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <div th:fragment="left">
     <div class="layui-side-scroll">
-        <ul class="layui-nav layui-nav-tree" lay-filter="test">
-            <li class="layui-nav-item layui-nav-itemed">
+        <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+            <li class="layui-nav-item">
                 <a class="" href="javascript:;">合同管理</a>
                 <dl class="layui-nav-child">
                     <dd><a th:href="@{/main?page=contract/main}">合同</a></dd>
-                    <dd><a sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/main?page=user/register}">注册</a></dd>
+                    <!--<dd><a sec:authorize="hasAuthority('ROLE_USER_ADD')" th:href="@{/main?page=user/register}">注册</a></dd>-->
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <a sec:authorize="hasAuthority('RESOURCE_CENTER')"  class="" href="javascript:;">权限管理</a>
+                <dl class="layui-nav-child">
+                    <dd><a sec:authorize="hasAuthority('ADMIN_USER')" th:href="@{/main?page=user/register }">用户</a></dd>
+                    <dd><a sec:authorize="hasAuthority('ADMIN_ROLE')"  th:href="@{/main?page=user/role}">角色</a></dd>
+                    <dd><a sec:authorize="hasAuthority('ADMIN_PERMISSION')" th:href="@{/main?page=user/permission }">权限</a></dd>
                 </dl>
             </li>
         </ul>

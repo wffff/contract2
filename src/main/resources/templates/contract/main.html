@@ -1,10 +1,10 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div class="layui-body" style="padding: 15px;" th:fragment="content">
     <div class="demoTable">
-        <button class="layui-btn" data-type="addContract" sec:authorize="hasAuthority('ROLE_ADMIN')">创建合同</button>
+        <button class="layui-btn" data-type="addContract" sec:authorize="hasAuthority('CONTRACT_ADD')">创建合同</button>
         <button class="layui-btn" data-type="detailContract">查看合同详情</button>
-        <button class="layui-btn" data-type="deleteContract" sec:authorize="hasAuthority('ROLE_ADMIN')">删除合同</button>
-        <button class="layui-btn" data-type="editContract" sec:authorize="hasAuthority('ROLE_ADMIN')">编辑合同</button>
+        <button class="layui-btn" data-type="deleteContract" sec:authorize="hasAuthority('CONTRACT_DELETE')">删除合同</button>
+        <button class="layui-btn" data-type="editContract" sec:authorize="hasAuthority('CONTRACT_EDIT')">编辑合同</button>
 
         <div class="layui-inline" id="contractSearch">
 
@@ -133,7 +133,7 @@
                      });
                  }
                 */
-
+                //问题：searchContract没有数据传输接口？？？
                 , searchContract: function () {
                     var companyName = $("#contractSearch input[name='companyName']").val();
                     var title = $("#contractSearch input[name='title']").val();

@@ -1,10 +1,12 @@
 package com.sncj.contract.entity;
 
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,10 +15,19 @@ import java.util.Set;
 @Entity
 @Table(name = "t_user")
 public class UserEntity extends BaseEntity implements UserDetails {
-    private String role;
     private String username;
     private String password;
     private String fullname;
+    @Transient
+    private Boolean exist;
+
+    public Boolean getExist() {
+        return exist;
+    }
+
+    public void setExist(Boolean exist) {
+        this.exist = exist;
+    }
 
     @Transient
     private Set<GrantedAuthority> authorities;
@@ -25,6 +36,15 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private Boolean expired=false;
     private Boolean locked=false;
     private Boolean limited=false;
+
+    //    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "t_user_role",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
+    @OrderBy(value = "id DESC")
+    @Where(clause = "del = false")
+    private Set<RoleEntity> role = new HashSet<>();
 
     public UserEntity() {
     }
@@ -38,11 +58,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
     }
 
 
-    public String getRole() {
+    public Set<RoleEntity> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Set<RoleEntity> role) {
         this.role = role;
     }
 
